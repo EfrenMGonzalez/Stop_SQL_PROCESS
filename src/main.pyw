@@ -30,6 +30,15 @@ def getDataBases():
     conn.close()
     return databases
 
+def probar_conexion(ip, usuario, contrasena):
+    try:
+        conn_str = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={ip};UID={usuario};PWD={contrasena}'
+        conn = pyodbc.connect(conn_str)
+        conn.close()
+        messagebox.showinfo("Información", "Conexión exitosa")
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo conectar a la base de datos: {e}")
+
 def guardar_configuracion(ip, usuario, contrasena):
      # Genera una clave única para cada ejecución del programa
     clave = generar_clave()  
@@ -117,7 +126,7 @@ def cancelar():
 if __name__ == "__main__":
     if not os.path.exists('configuracion.yaml'):
         root = tk.Tk()
-        root.geometry('200x300')
+        root.geometry('300x350')
         root.title("Configuración del Programa")
 
         tk.Label(root, text="IP del Servidor:").pack(pady=5)
@@ -131,6 +140,9 @@ if __name__ == "__main__":
         tk.Label(root, text="Contraseña:").pack(pady=5)
         contrasena_entry = tk.Entry(root, show="*")
         contrasena_entry.pack(pady=5)
+
+        tk.Button(root, text="Probar Conexión", command=lambda: probar_conexion(
+            ip_entry.get(), usuario_entry.get(), contrasena_entry.get())).pack(pady=5)
 
         tk.Button(root, text="Guardar", command=lambda: guardar_configuracion(
             ip_entry.get(), usuario_entry.get(), contrasena_entry.get())).pack(pady=20)
